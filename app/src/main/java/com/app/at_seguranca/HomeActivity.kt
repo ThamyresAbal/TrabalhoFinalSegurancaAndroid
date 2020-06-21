@@ -2,6 +2,7 @@ package com.app.at_seguranca
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -114,6 +115,7 @@ class HomeActivity : AppCompatActivity(),
             Log.d("COMPRA>>","Produto obtido com sucesso")
             adView.isVisible = false
             buttonPremium.isGone = true
+            Toast.makeText(this,"Você agora é premium \\o/",Toast.LENGTH_SHORT).show()
             if (!purchase.isAcknowledged) {
                 val acknowledgePurchaseParams = AcknowledgePurchaseParams
                     .newBuilder()

@@ -68,7 +68,7 @@
                     android:text="Voltar"
                     android:textColor="#000"
                     android:textSize="14sp"
-                    app:layout_constraintEnd_toStartOf="@+id/buttonAdd"
+                    app:layout_constraintEnd_toStartOf="@+id/buttonSair"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
