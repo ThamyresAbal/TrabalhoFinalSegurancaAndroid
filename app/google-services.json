@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "226990961785",
+    "firebase_url": "https://at-seguranca.firebaseio.com",
+    "project_id": "at-seguranca",
+    "storage_bucket": "at-seguranca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:226990961785:android:36e17e1ea103cf882cd0a8",
+        "android_client_info": {
+          "package_name": "com.app.at_seguranca"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "226990961785-kh2tj0d014m3jom7h0msf9ci66phm66u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAI9Sxr_36DbKYBTW3SM1TwSDrZSScmxPA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "226990961785-kh2tj0d014m3jom7h0msf9ci66phm66u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
