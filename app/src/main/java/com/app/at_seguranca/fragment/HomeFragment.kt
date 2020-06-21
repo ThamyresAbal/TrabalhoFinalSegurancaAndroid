@@ -38,10 +38,7 @@ class HomeFragment : Fragment() {
         usuarioViewModel.preferenciaUsuario(requireContext())
         usuarioViewModel.identificarUsuario(textEmailUsuario)
         listaViewModel.recyclerConfig(recycler,requireContext())
-        buttonPremium.setOnClickListener {
-            adView.isVisible = false
-            buttonPremium.isGone = true
-        }
+
         buttonCriarLista.setOnClickListener {
             findNavController().navigate(R.id.novaAnotacaoFragment)
         }

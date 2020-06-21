@@ -1,32 +1,23 @@
 package com.app.at_seguranca.viewModel
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
-import android.nfc.tech.IsoDep.get
-import android.provider.ContactsContract.CommonDataKinds.Email
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.inflate
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatDrawableManager.get
-import androidx.core.content.res.ColorStateListInflaterCompat.inflate
-import androidx.core.content.res.ComplexColorCompat.inflate
 import androidx.lifecycle.ViewModel
 import com.app.at_seguranca.HomeActivity
 import com.app.at_seguranca.MainActivity
 import com.app.at_seguranca.R
-import com.app.at_seguranca.fragment.model.Usuario
+import com.app.at_seguranca.model.Usuario
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.dialog_lista.view.*
 import kotlinx.android.synthetic.main.fragment_cadastro.view.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import java.util.*
-import java.util.zip.Inflater
 
 
 class UsuarioViewModel : ViewModel(){
