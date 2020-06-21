@@ -63,7 +63,7 @@
         android:background="@color/cardview_light_background"
         android:text="Digite seu texto aqui"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/recebeData"
+        app:layout_constraintEnd_toEndOf="@+id/textDataAtual"
         app:layout_constraintHorizontal_bias="0.01"
         app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView"
@@ -98,4 +98,19 @@
         android:text="__ /__ /____ "
         app:layout_constraintBottom_toTopOf="@+id/textAnotacao"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btnCriar"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/button"
+        android:text="criar"
+        android:textColor="#000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textAnotacao" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
