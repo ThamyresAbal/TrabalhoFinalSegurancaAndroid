@@ -39,7 +39,7 @@ class HomeFragment : Fragment() {
         }
         usuarioViewModel.preferenciaUsuario(requireContext())
         usuarioViewModel.identificarUsuario(textEmailUsuario)
-        listaViewModel.recyclerConfig(recycler,requireContext())
+        //listaViewModel.recyclerConfig(recycler,requireContext())
 
         buttonCriarLista.setOnClickListener {
             startActivity(Intent(context, NotasActivity::class.java))

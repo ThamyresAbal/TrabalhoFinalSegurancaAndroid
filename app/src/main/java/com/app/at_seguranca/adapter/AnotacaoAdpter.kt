@@ -7,47 +7,30 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.app.at_seguranca.R
 import com.app.at_seguranca.model.Anotacao
+import kotlinx.android.synthetic.main.activity_notas.view.*
 import kotlinx.android.synthetic.main.layout_lista.view.*
 
 
-class AnotacaoAdpter(
-    private val listaAnotacao: List<Anotacao>,
-    val mostraAnotacao:(Anotacao, Context,view:View)-> Unit
-
-) : RecyclerView.Adapter
-<AnotacaoAdpter.AnotacaoViewHolder>() {
-
-    class AnotacaoViewHolder(itemView: View)
-        : RecyclerView.ViewHolder(itemView){
-        val textNomeAnotacao = itemView.txtNomeAnotacao
-        val data = itemView.txtData
-    }
+class AnotacaoAdpter(var listaArquivo : MutableList<Anotacao>) : RecyclerView.Adapter<AnotacaoAdpter.AnotacaoViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnotacaoViewHolder {
-
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(
-                R.layout.layout_lista,
-                parent,
-                false
-            )
-
-        val anotacaoViewHolder = AnotacaoViewHolder(view)
-
-        anotacaoViewHolder.itemView.setOnClickListener {
-            val anime = listaAnotacao[anotacaoViewHolder.adapterPosition]
-            mostraAnotacao(anime, parent.context,view)
-        }
-
-        return anotacaoViewHolder
+        var view = LayoutInflater.from(parent.context).inflate(R.layout.layout_lista,parent,false)
+        return AnotacaoViewHolder(view)
     }
-    override fun getItemCount(): Int = listaAnotacao.size
+
+    override fun getItemCount(): Int = listaArquivo.size
 
     override fun onBindViewHolder(holder: AnotacaoViewHolder, position: Int) {
-        val listaAnotacao = listaAnotacao[position]
-        holder.textNomeAnotacao.text = listaAnotacao.titulo
-        holder.data.text = listaAnotacao.data
+        holder.bind(listaArquivo[position])
+    }
 
+    inner class AnotacaoViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
+        fun bind(anotacao: Anotacao){
+
+            itemView.txtNomeAnotacao.text = anotacao.titulo
+            itemView.textoAnotacao.text = anotacao.texto
+            itemView.imageView2.setImageBitmap(anotacao.foto)
+
+        }
     }
 }

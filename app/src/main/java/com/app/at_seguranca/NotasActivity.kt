@@ -10,9 +10,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
+import com.app.at_seguranca.model.Anotacao
 import kotlinx.android.synthetic.main.activity_notas.*
 import java.io.*
-
 
 class NotasActivity : AppCompatActivity() {
 
@@ -24,9 +24,10 @@ class NotasActivity : AppCompatActivity() {
         setContentView(R.layout.activity_notas)
 
 
+
         btnCriar.setOnClickListener(){
             gravarArquivoTxt(txtTitulo.text.toString(), textDataAtual.text.toString(), textAnotacao.text.toString())
-
+            val titulo=  txtTitulo.text.toString() + textDataAtual.text.toString()
             gravarArquivoFig(txtTitulo.text.toString(), textDataAtual.text.toString(), fotoBitmap)
             startActivity(Intent(this, HomeActivity::class.java))
         }
@@ -34,7 +35,6 @@ class NotasActivity : AppCompatActivity() {
         imageView.setOnClickListener{
             onCameraClick(this)
         }
-
 
 
 
@@ -69,6 +69,7 @@ class NotasActivity : AppCompatActivity() {
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
+
     fun getEncFile(nome: String): EncryptedFile{
         val masterkeyAlias: String = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
         val file: java.io.File = java.io.File(applicationContext.filesDir, nome)
@@ -103,32 +104,6 @@ class NotasActivity : AppCompatActivity() {
         encryptedOut.write(imagemByteArray)
         encryptedOut.close()
 
-    }
-
-    fun pegarArquivoTxt(titulo : String, data : String) : String{
-
-        val encryptedIn: FileInputStream =
-            getEncFile(titulo+data+".txt").openFileInput()
-
-        var textoString : String = ""
-        val br = BufferedReader(InputStreamReader(encryptedIn))
-        br.lines().forEach{
-            textoString = it.toString()
-        }
-        encryptedIn.close()
-
-        return textoString
-
-    }
-
-    fun pegarArquivoFig(titulo : String, data : String) : Bitmap{
-
-        val encryptedIn: FileInputStream =
-            getEncFile(titulo+data+".fig").openFileInput()
-
-        var bmp = BitmapFactory.decodeStream(encryptedIn)
-
-        return bmp
     }
 
 

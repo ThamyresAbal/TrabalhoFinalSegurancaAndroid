@@ -1,19 +1,30 @@
 package com.app.at_seguranca
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.security.crypto.EncryptedFile
+import androidx.security.crypto.MasterKeys
 import com.android.billingclient.api.*
+import com.app.at_seguranca.adapter.AnotacaoAdpter
+import com.app.at_seguranca.model.Anotacao
 import com.google.android.gms.ads.*
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
+import java.io.FileInputStream
+import java.io.InputStreamReader
 import kotlin.collections.HashMap
 
 class HomeActivity : AppCompatActivity(),
@@ -53,7 +64,27 @@ class HomeActivity : AppCompatActivity(),
             startActivity(Intent(this, NotasActivity::class.java))
         }
 
+        var listaStringTxt = mutableListOf<String>()
+        var listaStringFig = mutableListOf<String>()
 
+        var listaPronta = mutableListOf<Anotacao>()
+
+        var diretorio = filesDir
+
+        if(diretorio.exists() && !diretorio.walk().toMutableList().isNullOrEmpty()){
+            diretorio.walk().forEach {
+                if(it.name.endsWith(".txt")){
+                    listaStringTxt.add(it.name)
+                    listaStringFig.add(it.name.replace(".txt",".fig"))
+                }
+            }
+        }
+
+        listaPronta = unirListas(listaStringTxt,listaStringFig)
+        Toast.makeText(applicationContext, listaStringTxt.toString(), Toast.LENGTH_LONG).show()
+        Log.i("lista", listaStringFig.toString())
+        recycler.adapter = AnotacaoAdpter(listaPronta)
+        recycler.layoutManager = LinearLayoutManager(this)
     }
     override fun onDestroy() {
         clienteInApp.endConnection()
@@ -136,5 +167,73 @@ class HomeActivity : AppCompatActivity(),
         }
     }
 
+    fun getEncFile(nome: String): EncryptedFile {
+        val masterkeyAlias: String = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+        val file: java.io.File = java.io.File(applicationContext.filesDir, nome)
+        return EncryptedFile.Builder(
+            file,
+            applicationContext,
+            masterkeyAlias,
+            EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
+        ).build()
 
+    }
+
+    fun pegarArquivoTxt(titulo : String) : String{
+
+        val encryptedIn: FileInputStream =
+            getEncFile(titulo).openFileInput()
+
+        var textoString : String = ""
+        val br = BufferedReader(InputStreamReader(encryptedIn))
+        br.lines().forEach{
+            textoString = it.toString()
+        }
+        encryptedIn.close()
+
+        return textoString
+
+    }
+
+    fun pegarArquivoFig(titulo : String) : Bitmap{
+
+        val encryptedIn: FileInputStream =
+            getEncFile(titulo).openFileInput()
+
+        var bmp = BitmapFactory.decodeStream(encryptedIn)
+
+        return bmp
+    }
+
+    fun unirListas(listaTxt : MutableList<String>, listaFig : MutableList<String>) : MutableList<Anotacao>{
+
+        if(listaTxt.isNullOrEmpty() || listaFig.isNullOrEmpty()){
+            return mutableListOf<Anotacao>()
+        }
+        else{
+
+            var listaTitulo = mutableListOf<String>()
+            var listaTexto = mutableListOf<String>()
+            var listaFoto = mutableListOf<Bitmap>()
+
+            var listaPronta = mutableListOf<Anotacao>()
+
+            listaTxt.forEach {
+                listaTitulo.add(it)
+                listaTexto.add(pegarArquivoTxt(it))
+            }
+
+            listaFig.forEach {
+                listaFoto.add(pegarArquivoFig(it))
+            }
+
+            for (i in 0 until listaFig.size){
+                listaPronta.add(
+                    Anotacao(titulo = listaTitulo[i], texto = listaTexto[i], foto = listaFoto[i])
+                )
+            }
+            return listaPronta
+
+        }
+    }
 }
