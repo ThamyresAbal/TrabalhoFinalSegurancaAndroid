@@ -9,13 +9,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.app.at_seguranca.R
-import com.app.at_seguranca.viewModel.ListaViewModel
-import com.app.at_seguranca.viewModel.NovaAnotacaoViewModel
 import kotlinx.android.synthetic.main.fragment_nova_anotacao.*
-import java.util.Optional.of
 
 class NovaAnotacaoFragment : Fragment() {
     private lateinit var novaAnotacaoViewModel: NovaAnotacaoViewModel

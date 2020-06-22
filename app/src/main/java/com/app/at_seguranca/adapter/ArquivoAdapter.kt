@@ -14,7 +14,7 @@ class ArquivoAdapter (private val arquivos: MutableList<File>) :
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): ArquivoAdapter.MyViewHolder {
         val textView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.layout_lista, parent, false) as TextView
+            .inflate(R.layout.lista_nota, parent, false) as TextView
         return MyViewHolder(textView)
     }
     override fun onBindViewHolder(holder: MyViewHolder,
