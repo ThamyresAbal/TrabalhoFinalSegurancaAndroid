@@ -1,5 +1,6 @@
 package com.app.at_seguranca.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import com.app.at_seguranca.NotasActivity
 import com.app.at_seguranca.R
 import com.app.at_seguranca.viewModel.ListaViewModel
 import com.app.at_seguranca.viewModel.UsuarioViewModel
@@ -40,8 +42,9 @@ class HomeFragment : Fragment() {
         listaViewModel.recyclerConfig(recycler,requireContext())
 
         buttonCriarLista.setOnClickListener {
-            findNavController().navigate(R.id.novaAnotacaoFragment)
+            startActivity(Intent(context, NotasActivity::class.java))
         }
+
 
     }
 }

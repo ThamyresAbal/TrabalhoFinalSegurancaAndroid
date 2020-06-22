@@ -1,123 +1,135 @@
 package com.app.at_seguranca
 
+import android.R.attr.bitmap
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.View
-import android.widget.TextView
-import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
-import com.app.at_seguranca.R
 import com.app.at_seguranca.adapter.ArquivoAdapter
-import com.app.at_seguranca.viewModel.NovaAnotacaoViewModel
 import kotlinx.android.synthetic.main.activity_notas.*
-import kotlinx.android.synthetic.main.activity_notas.getImageView
-import kotlinx.android.synthetic.main.activity_notas.imageView
-import kotlinx.android.synthetic.main.fragment_nova_anotacao.*
-import java.io.BufferedReader
-import java.io.File
-import java.io.InputStreamReader
-import java.io.PrintWriter
-import java.util.*
-import kotlin.collections.ArrayList
+import java.io.*
+
 
 class NotasActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var arquivoAdapter: ArquivoAdapter
     private lateinit var viewManager: RecyclerView.LayoutManager
-    private lateinit var novaAnotacaoViewModel: NovaAnotacaoViewModel
-    private var TAKE_PICTURE = 1
 
+    lateinit var fotoBitmap  : Bitmap
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notas)
 
-        novaAnotacaoViewModel = ViewModelProviders.of(this).get(NovaAnotacaoViewModel::class.java)
-        viewManager = LinearLayoutManager(this)
-        arquivoAdapter = ArquivoAdapter(ArrayList<File>(obterNotas()))
-        recyclerView = findViewById<RecyclerView>(R.id.recycler).apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = arquivoAdapter
+
+        btnCriar.setOnClickListener(){
+            gravarArquivoTxt(txtTitulo.text.toString(), textDataAtual.text.toString(), textAnotacao.text.toString())
+
+            gravarArquivoFig(txtTitulo.text.toString(), textDataAtual.text.toString(), fotoBitmap)
+            startActivity(Intent(this, HomeActivity::class.java))
         }
-        getImageView.setOnClickListener {
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-                takePictureIntent.resolveActivity(this.packageManager)?.also {
-                    startActivityForResult(takePictureIntent, TAKE_PICTURE)
-                }
+
+        imageView.setOnClickListener{
+            onCameraClick(this)
+        }
+
+    }
+
+    private val REQUEST_CAPTURE_IMAGE = 100
+
+    fun onCameraClick(view: NotasActivity){
+        val pictureIntent = Intent(
+            MediaStore.ACTION_IMAGE_CAPTURE
+        )
+        if (pictureIntent.resolveActivity(packageManager) != null) {
+            startActivityForResult(
+                pictureIntent,
+                REQUEST_CAPTURE_IMAGE
+            )
+        }
+    }
+
+    override fun onActivityResult(
+        requestCode: Int, resultCode: Int,
+        data: Intent?
+    ) {
+        if (requestCode == REQUEST_CAPTURE_IMAGE &&
+            resultCode == Activity.RESULT_OK
+        ) {
+            if (data != null && data.extras != null) {
+                val fotoTiradaBitmap = data?.extras?.get("data") as Bitmap
+                imageView.setImageBitmap(fotoTiradaBitmap)
+                fotoBitmap = fotoTiradaBitmap
             }
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == TAKE_PICTURE && resultCode == Activity.RESULT_OK) {
-            val imageBitmap = data!!.extras!!.get("data") as Bitmap
-            imageView.setImageBitmap(imageBitmap)
-        }
     }
-
-    private fun obterNotas():List<File>{
-        var diretorio = obterDiretorio("notas",true)
-        return diretorio.listFiles().filter {
-                t -> t.name.endsWith(".note")
-        }
-    }
-
-    fun obterDiretorio(diretorio: String, criar: Boolean):File{
-        var dirArq = getExternalFilesDir(null)!!.path + "/" + diretorio
-        var dirFile = File(dirArq)
-        if(!dirFile.exists()&&(!criar||!dirFile.mkdirs()))
-            throw Exception("Diretório indisponível")
-        return dirFile
-    }
-
-    private fun gravarNota(texto: String): File{
-        var diretorio = obterDiretorio("notas",false)
-        val masterKeyAlias: String =
-            MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-        var nota = File(diretorio.path+"/"+ Date().time+".note")
-        var encryptedOut = EncryptedFile.Builder(
-            nota, applicationContext, masterKeyAlias,
+    fun getEncFile(nome: String): EncryptedFile{
+        val masterkeyAlias: String = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+        val file: java.io.File = java.io.File(applicationContext.filesDir, nome)
+        return EncryptedFile.Builder(
+            file,
+            applicationContext,
+            masterkeyAlias,
             EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
-        ).build().openFileOutput()
+        ).build()
+
+    }
+
+    fun gravarArquivoTxt(titulo : String, data : String, anotacao: String){
+
+        val encryptedOut: FileOutputStream =
+            getEncFile(titulo+data+".txt").openFileOutput()
+
         val pw = PrintWriter(encryptedOut)
-        pw.println(texto)
+        pw.println("titulo: $titulo , data : $data , $anotacao")
         pw.flush()
         encryptedOut.close()
-        return nota
     }
 
-    fun lerNota(nomeNota: String): String{
-        var diretorio = obterDiretorio("notas",false)
-        val masterKeyAlias: String =
-            MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-        var nota = File(diretorio.path+"/"+nomeNota)
-        var encryptedIn = EncryptedFile.Builder(
-            nota, applicationContext, masterKeyAlias,
-            EncryptedFile.FileEncryptionScheme.AES256_GCM_HKDF_4KB
-        ).build().openFileInput()
+    fun gravarArquivoFig(titulo : String, data : String, fotoA: Bitmap){
+
+        val encryptedOut: FileOutputStream = getEncFile(titulo+data+".fig").openFileOutput()
+
+        var baos = ByteArrayOutputStream()
+        fotoA.compress(Bitmap.CompressFormat.PNG, 90, baos)
+        var imagemByteArray = baos.toByteArray()
+
+        encryptedOut.write(imagemByteArray)
+        encryptedOut.close()
+
+    }
+
+    fun pegarArquivoTxt(titulo : String, data : String) : String{
+
+        val encryptedIn: FileInputStream =
+            getEncFile(titulo+data+".txt").openFileInput()
+
+        var textoString : String = ""
         val br = BufferedReader(InputStreamReader(encryptedIn))
-        val sb = StringBuffer()
-        br.lines().forEach{ t -> sb.append(t+"\n") }
+        br.lines().forEach{
+            textoString = it.toString()
+        }
         encryptedIn.close()
-        return sb.toString()
+
+        return textoString
+
     }
 
-    /*fun clickAdd() {
-        arquivoAdapter.addNota(gravarNota(textAnotacao.text.toString()))
-        textAnotacao.setText("")
+    fun pegarArquivoFig(titulo : String, data : String) : Bitmap{
+
+        val encryptedIn: FileInputStream =
+            getEncFile(titulo+data+".fig").openFileInput()
+
+        var bmp = BitmapFactory.decodeStream(encryptedIn)
+
+        return bmp
     }
-    fun clickLer(){
-        var nomeNota = (view as TextView).text.toString()
-        textAnotacao.setText(lerNota(nomeNota))
-    }
-*/
+
 
 }
