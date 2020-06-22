@@ -3,32 +3,17 @@ package com.app.at_seguranca
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.security.crypto.EncryptedFile
-import androidx.security.crypto.MasterKeys
 import com.android.billingclient.api.*
-import com.app.at_seguranca.adapter.ArquivoAdapter
 import com.google.android.gms.ads.*
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.activity_notas.*
-import kotlinx.android.synthetic.main.activity_prof.*
-import kotlinx.android.synthetic.main.fragment_cadastro.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.File
-import java.io.InputStreamReader
-import java.io.PrintWriter
-import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class HomeActivity : AppCompatActivity(),
@@ -36,9 +21,7 @@ class HomeActivity : AppCompatActivity(),
     SkuDetailsResponseListener,
     PurchasesUpdatedListener {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var arquivoAdapter: ArquivoAdapter
-    private lateinit var viewManager: RecyclerView.LayoutManager
+
     private lateinit var clienteInApp: BillingClient
     private var currentSku = "android.test.purchased"
     private var mapSku = HashMap<String, SkuDetails>()
@@ -66,23 +49,11 @@ class HomeActivity : AppCompatActivity(),
             .build()
             clienteInApp.startConnection(this)
 
-
-
         buttonCriarLista.setOnClickListener{
             startActivity(Intent(this, NotasActivity::class.java))
         }
 
-//        viewManager = LinearLayoutManager(this)
-//        arquivoAdapter = ArquivoAdapter(ArrayList<File>(obterNotas()))
-//        recyclerView = findViewById<RecyclerView>(R.id.recView).apply {
-//            setHasFixedSize(true)
-//            layoutManager = viewManager
-//            adapter = arquivoAdapter
-//        }
 
-        button2.setOnClickListener{
-            startActivity(Intent(this, ProfActivity::class.java))
-        }
     }
     override fun onDestroy() {
         clienteInApp.endConnection()

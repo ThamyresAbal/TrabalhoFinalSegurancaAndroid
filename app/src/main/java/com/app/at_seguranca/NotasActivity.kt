@@ -1,6 +1,5 @@
 package com.app.at_seguranca
 
-import android.R.attr.bitmap
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,16 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.security.crypto.EncryptedFile
 import androidx.security.crypto.MasterKeys
-import com.app.at_seguranca.adapter.ArquivoAdapter
 import kotlinx.android.synthetic.main.activity_notas.*
 import java.io.*
 
 
 class NotasActivity : AppCompatActivity() {
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var arquivoAdapter: ArquivoAdapter
-    private lateinit var viewManager: RecyclerView.LayoutManager
 
+    var anotacao: String? = null
+    var anotacaoLista: List<String>? = null
     lateinit var fotoBitmap  : Bitmap
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +34,9 @@ class NotasActivity : AppCompatActivity() {
         imageView.setOnClickListener{
             onCameraClick(this)
         }
+
+
+
 
     }
 
